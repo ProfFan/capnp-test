@@ -1,0 +1,32 @@
+// ROS Message Definition Parser
+// ==========================
+
+file = (result)*
+result = sp (comment / definition)* linebreak
+
+_ "whitespace"
+  = [ \t\n\r]*
+
+sp "space"
+  = $[ \t]*
+
+linebreak = [\n\r]
+
+types "types" = ("bool" / "uint8" / "float32" / "string" / "Header" / [^ \t\n\r]+)
+
+array "array" = types ("[]")
+
+type "type" = array / types
+
+identifier "identifier" = $[a-zA-Z_]+
+
+value = $[0-9a-zA-Z_]+
+
+constant "constant" = type sp identifier sp [=] sp value
+
+variable "variable" = (type / array) sp identifier sp ![=]
+definition "definition" = (variable / constant)
+
+string "string" = sp $[^\n\r]+
+
+comment "comment" = (['#']) string
